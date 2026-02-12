@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>送るあなたへ</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: url("images/おめQ-04.png") no-repeat center center;
+      background-size: cover;
+      height: 100vh;
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -150px;
+      width: 120px; /* ← 風船大きめ */
+      animation: floatUp 4s linear forwards;
+    }
+
+    @keyframes floatUp {
+      to {
+        transform: translateY(-120vh);
+        opacity: 0;
+      }
+      
+    }
+
+    #yayImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.3);
+  width: 100%;              /* ← もっと大きく */
+  max-width: 700px;         /* ← 上限も拡大 */
+  opacity: 0;
+  z-index: 999;
+  transition: all 0.5s cubic-bezier(.17,1.8,.4,1);
+}
+
+  </style>
+</head>
+
+<body>
+
+  <!-- 長押し後に出る画像 -->
+  <img src="images/お祝いイェイ.png" id="yayImage">
+
+ <script>
+let pressTimer;
+let isLongPress = false;
+const yay = document.getElementById("yayImage");
+
+function createBalloon() {
+  const balloon = document.createElement("img");
+  balloon.src = "images/風船.png";
+  balloon.style.position = "absolute";
+  balloon.style.width = "120px";
+  balloon.style.left = Math.random() * 100 + "vw";
+  balloon.style.bottom = "-150px";
+  balloon.style.animation = "floatUp 4s linear forwards";
+  document.body.appendChild(balloon);
+
+  setTimeout(() => {
+    balloon.remove();
+  }, 4000);
+}
+
+function startPress() {
+  isLongPress = false;
+
+  pressTimer = setTimeout(() => {
+    isLongPress = true;
+
+    // 風船出現
+    const balloonInterval = setInterval(createBalloon, 200);
+
+    // 長押し終了時に止める
+    document.addEventListener("mouseup", () => {
+      clearInterval(balloonInterval);
+
+      if (isLongPress) {
+        showYay();
+      }
+
+    }, { once: true });
+
+  }, 500); // 0.5秒押したら長押し判定
+}
+
+function showYay() {
+  yay.style.opacity = "1";
+  yay.style.transform = "translate(-50%, -50%) scale(1.2)";
+
+  // 2秒後にフェードアウト
+  setTimeout(() => {
+    yay.style.opacity = "0";
+    yay.style.transform = "translate(-50%, -50%) scale(0.8)";
+  }, 2000);
+}
+
+function cancelPress() {
+  clearTimeout(pressTimer);
+}
+
+document.body.addEventListener("mousedown", startPress);
+document.body.addEventListener("touchstart", startPress);
+
+document.body.addEventListener("mouseup", cancelPress);
+document.body.addEventListener("touchend", cancelPress);
+</script>
+
+
+</body>
+</html>
+
+
